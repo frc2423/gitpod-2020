@@ -63,6 +63,6 @@ public class Robot extends TimedRobot {
     double speed = controller.getY();
     double turnRate = controller.getX();
 
-    drive.arcadeDrive(-speed, turnRate);
+    drive.arcadeDrive(-speed * .25, turnRate * .25);
   }
 }
