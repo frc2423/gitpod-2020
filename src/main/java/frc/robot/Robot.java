@@ -66,5 +66,5 @@ public class Robot extends TimedRobot {
     System.out.println("WEEE");
 
     drive.arcadeDrive(-speed * .25, -turnRate * .5);
-  }s
+  }
 }
