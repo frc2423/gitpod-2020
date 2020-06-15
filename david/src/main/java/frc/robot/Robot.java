@@ -95,6 +95,6 @@ public class Robot extends TimedRobot {
     } else{
         speed = 0.7;
     }
-    drive.arcadeDrive(-speed, turnRate);
+    drive.arcadeDrive(speed, turnRate);
   }
 }

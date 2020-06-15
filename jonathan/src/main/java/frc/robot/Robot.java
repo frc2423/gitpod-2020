@@ -95,7 +95,7 @@ public class Robot extends TimedRobot {
 
     // set these values to change speed and turn rate of the robot
     if (targetAngle > angle - 10 && targetAngle < angle + 10) {
-        speed = 0.5;
+        speed = -0.6;
         turnRate = 0;
     } else {
         speed = 0;
