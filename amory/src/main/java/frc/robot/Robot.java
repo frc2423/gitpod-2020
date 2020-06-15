@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.XboxController;
 
 /**
  * Challenge 2
@@ -42,6 +43,8 @@ public class Robot extends TimedRobot {
 
   private NetworkTableEntry targetAngleEntry;
 
+  private XboxController controller;
+
   @Override
   public void robotInit() {
 
@@ -64,14 +67,10 @@ public class Robot extends TimedRobot {
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     NetworkTable table = inst.getTable("robot");
     targetAngleEntry = table.getEntry("targetAngle");
-  }
 
-  @Override
-  public void autonomousInit() {
-    // Resets the gyro angle to 0. Should be called at the beginning of each challenge
-    gyro.reset();
+    controller = new XboxController(0);
   }
-
+  
   public double getTargetAngle() {
     return targetAngleEntry.getDouble(45);
   }
@@ -102,5 +101,19 @@ public class Robot extends TimedRobot {
     }
 
     drive.arcadeDrive(speed, turnRate);
+  }
+
+  @Override
+  public void teleopInit() {
+    // Resets the gyro angle to 0. Should be called at the beginning of each challenge
+    gyro.reset();
+  }
+
+  @Override
+  public void teleopPeriodic() {
+    double speed = controller.getY();
+    double turnRate = controller.getX();
+
+    drive.arcadeDrive(-speed, turnRate);
   }
 }
