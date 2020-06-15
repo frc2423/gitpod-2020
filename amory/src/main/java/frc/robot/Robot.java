@@ -14,6 +14,19 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
+/**
+ * Challenge 1
+ * 
+ * Make the robot face Amory and then DESTROY HIM! In this challenge you'll 
+ * be given the angle Amory is located relative to the robot through
+ * NetworkTables. Using the gyro, you must turn the robot to face Amory and
+ * then charge! Your code will need to perform this challenge 3 times in order
+ * to pass, so remember to reset the gyro on enable!
+ */
 
 public class Robot extends TimedRobot {
   private CANSparkMax flMotor;
@@ -24,6 +37,8 @@ public class Robot extends TimedRobot {
   private DifferentialDrive drive;
 
   private AHRS gyro;
+
+  private NetworkTableEntry targetAngleEntry;
 
   @Override
   public void robotInit() {
@@ -43,6 +58,10 @@ public class Robot extends TimedRobot {
 
     // use this to get angle readings from the navx's gyro sensor
     gyro = new AHRS(SPI.Port.kMXP);
+
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    NetworkTable table = inst.getTable("robot");
+    targetAngleEntry = table.getEntry("targetAngle");
   }
 
   @Override
@@ -52,7 +71,7 @@ public class Robot extends TimedRobot {
   }
 
   public double getTargetAngle() {
-    return 45;
+    return targetAngleEntry.getDouble(45);
   }
 
   @Override
@@ -65,7 +84,8 @@ public class Robot extends TimedRobot {
     double targetAngle = getTargetAngle();
 
     // print out the angle reading. For Testing purposes.
-    System.out.println("angle: " + angle);
+    System.out.println("current angle: " + angle);
+    System.out.println("target angle: " + targetAngle);
 
     // set these values to change speed and turn rate of the robot
     double speed = 0;
