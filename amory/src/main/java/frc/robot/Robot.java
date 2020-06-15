@@ -92,9 +92,9 @@ public class Robot extends TimedRobot {
     double turnRate = 0;
 
     if (angle > targetAngle + 5) {
-      turnRate = -.3;
+      turnRate = -.5;
     } else if (angle < targetAngle - 5) {
-      turnRate = .3;
+      turnRate = .5;
     } else {
       speed = .3;
     }
