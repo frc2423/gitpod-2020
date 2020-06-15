@@ -20,15 +20,12 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
 
 /**
- * Challenge 2
+ * Challenge 3
  * 
- * Same as the previous challenge, but the angle I provide will be very large.
- * You must complete this challenge in under 15 seconds, 3 times in order to
- * pass! 
- * 
- * HINT: -360, 0 and 360 degrees are the same angle.
- * 
- * BONUS: Make the robot turn in the most optimal direction.
+ * AMORY'S REVENGE! For this challenge we'll be playing a game of kick the robot!
+ * You'll need to make the robot cross the room while Amory is kicking it! The robot
+ * must stay in bounds and the robot's speed will be capped. This challenge will be
+ * timed, and whoever can cross the room in the shortest amount of time wins!
  */
 
 public class Robot extends TimedRobot {
@@ -70,9 +67,9 @@ public class Robot extends TimedRobot {
 
     controller = new XboxController(0);
   }
-  
+
   public double getTargetAngle() {
-    return targetAngleEntry.getDouble(45);
+    return 0;
   }
 
   @Override
