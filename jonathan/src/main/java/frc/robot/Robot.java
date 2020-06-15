@@ -92,8 +92,12 @@ public class Robot extends TimedRobot {
     // print out the angle reading. For Testing purposes.
     System.out.println("current angle: " + angle);
     System.out.println("target angle: " + targetAngle);
-
-    targetAngle = Math.abs(targetAngle) % 360;
+    
+    if (targetAngle < 0) {
+        targetAngle = targetAngle % 360 + 360;
+    } else {
+        targetAngle = targetAngle % 360;  
+    }
     angle = angle % 360;
 
     // set these values to change speed and turn rate of the robot
