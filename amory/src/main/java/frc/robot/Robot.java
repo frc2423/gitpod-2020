@@ -21,11 +21,13 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 /**
  * Challenge 1
  * 
- * Make the robot face Amory and then DESTROY HIM! In this challenge you'll 
- * be given the angle Amory is located relative to the robot through
- * NetworkTables. Using the gyro, you must turn the robot to face Amory and
- * then charge! Your code will need to perform this challenge 3 times in order
- * to pass, so remember to reset the gyro on enable!
+ * Same as the previous challenge, but the angle I provide will be very large.
+ * You must complete this challenge in under 15 seconds, 3 times in order to
+ * pass! 
+ * 
+ * HINT: -360, 0 and 360 degrees are the same angle.
+ * 
+ * BONUS: Make the robot turn in the most optimal direction.
  */
 
 public class Robot extends TimedRobot {
