@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
 
     // set these values to change speed and turn rate of the robot
     double speed = 0;
-    double turnRate = 0;
+    double turnRate = 0; 
 
     drive.arcadeDrive(-speed, turnRate);
   }

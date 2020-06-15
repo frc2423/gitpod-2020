@@ -39,6 +39,8 @@ public class Robot extends TimedRobot {
   private AHRS gyro;
 
   private NetworkTableEntry targetAngleEntry;
+  
+  private boolean linedUp = false;
 
   @Override
   public void robotInit() {
@@ -87,9 +89,22 @@ public class Robot extends TimedRobot {
     System.out.println("current angle: " + angle);
     System.out.println("target angle: " + targetAngle);
 
-    // set these values to change speed and turn rate of the robot
+    double diff = targetAngle - angle;
+
+    if (diff < 5 && diff > -5) {
+        linedUp = true;
+    }
+
     double speed = 0;
     double turnRate = 0;
+
+    if (!linedUp) {
+        turnRate = diff / 100;
+    } else if (linedUp) {
+        speed = 0.5;
+    }
+
+    // set these values to change speed and turn rate of the robot
 
     drive.arcadeDrive(-speed, turnRate);
   }

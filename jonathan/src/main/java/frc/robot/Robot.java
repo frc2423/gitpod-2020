@@ -40,6 +40,9 @@ public class Robot extends TimedRobot {
 
   private NetworkTableEntry targetAngleEntry;
 
+  private double speed;
+  private double turnRate;
+
   @Override
   public void robotInit() {
 
@@ -68,6 +71,9 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     // Resets the gyro angle to 0. Should be called at the beginning of each challenge
     gyro.reset();
+
+    double speed = 0;
+    double turnRate = 0;
   }
 
   public double getTargetAngle() {
@@ -88,8 +94,15 @@ public class Robot extends TimedRobot {
     System.out.println("target angle: " + targetAngle);
 
     // set these values to change speed and turn rate of the robot
-    double speed = 0;
-    double turnRate = 0;
+    if (targetAngle > angle - 10 && targetAngle < angle + 10) {
+        speed = 0.5;
+        turnRate = 0;
+    } else {
+        speed = 0;
+        turnRate = 0.3;
+    }
+
+    // oooh aaah monkey code
 
     drive.arcadeDrive(-speed, turnRate);
   }
