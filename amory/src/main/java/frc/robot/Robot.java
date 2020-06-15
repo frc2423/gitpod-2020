@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-
+import edu.wpi.first.wpilibj.XboxController;
 /**
  * Challenge 2
  * 
@@ -42,6 +42,8 @@ public class Robot extends TimedRobot {
 
   private NetworkTableEntry targetAngleEntry;
 
+  private XboxController controller;
+
   @Override
   public void robotInit() {
 
@@ -64,16 +66,42 @@ public class Robot extends TimedRobot {
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     NetworkTable table = inst.getTable("robot");
     targetAngleEntry = table.getEntry("targetAngle");
-  }
 
-  @Override
-  public void autonomousInit() {
-    // Resets the gyro angle to 0. Should be called at the beginning of each challenge
-    gyro.reset();
+    // Xbox controller
+    controller = new XboxController(0);
   }
 
   public double getTargetAngle() {
     return targetAngleEntry.getDouble(45);
+  }
+
+  public double normalizeAngle(double angle) {
+    double angleRemainder = angle % 360;
+
+    if (angleRemainder < -180) {
+      return angleRemainder + 360;
+    } else if (angleRemainder > 180) {
+      return angleRemainder - 360;
+    } else {
+      return angleRemainder;
+    }
+  }
+
+  public double getAngleDelta(double current, double target) {
+    double normalizedCurrent = normalizeAngle(current);
+    double normalizedTarget = normalizeAngle(target);
+
+    System.out.println("gfd " + normalizedTarget + " " + normalizedCurrent);
+
+    if (Math.abs(normalizedTarget - normalizedCurrent) > 180) {
+      if (normalizedCurrent < 0) {
+        normalizedCurrent += 360;
+      } else {
+        normalizedCurrent -= 360;
+      }
+    }
+
+    return normalizedTarget - normalizedCurrent;
   }
 
   @Override
@@ -85,6 +113,9 @@ public class Robot extends TimedRobot {
     // use this to get the angle the robot needs to be pointed at to face Amory
     double targetAngle = getTargetAngle();
 
+
+    double angleDelta = getAngleDelta(angle, targetAngle);
+
     // print out the angle reading. For Testing purposes.
     System.out.println("current angle: " + angle);
     System.out.println("target angle: " + targetAngle);
@@ -93,14 +124,30 @@ public class Robot extends TimedRobot {
     double speed = 0;
     double turnRate = 0;
 
-    if (angle > targetAngle + 5) {
-      turnRate = -.5;
-    } else if (angle < targetAngle - 5) {
+    if (angleDelta > 10) {
       turnRate = .5;
+    } else if (angleDelta < -10) {
+      turnRate = -.5;
     } else {
       speed = .3;
     }
 
+    System.out.println("delta: " + angleDelta);
+
     drive.arcadeDrive(speed, turnRate);
+  }
+
+  @Override
+  public void teleopInit() {
+    // Resets the gyro angle to 0. Should be called at the beginning of each challenge
+    gyro.reset();
+  }
+
+  @Override
+  public void teleopPeriodic() {
+    double speed = controller.getY();
+    double turnRate = controller.getX();
+
+    drive.arcadeDrive(-speed, turnRate);
   }
 }
