@@ -91,6 +91,14 @@ public class Robot extends TimedRobot {
     double speed = 0;
     double turnRate = 0;
 
-    drive.arcadeDrive(-speed, turnRate);
+    if (angle > targetAngle + 5) {
+      turnRate = -.3;
+    } else if (angle < targetAngle - 5) {
+      turnRate = .3;
+    } else {
+      speed = .3;
+    }
+
+    drive.arcadeDrive(speed, turnRate);
   }
 }
