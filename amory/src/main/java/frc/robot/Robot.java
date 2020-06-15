@@ -19,7 +19,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 /**
- * Challenge 1
+ * Challenge 2
  * 
  * Same as the previous challenge, but the angle I provide will be very large.
  * You must complete this challenge in under 15 seconds, 3 times in order to
