@@ -89,8 +89,19 @@ public class Robot extends TimedRobot {
 
     // set these values to change speed and turn rate of the robot
     double speed = 0;
-    double turnRate = 0; 
+    double turnRate = 0;
+    // i know something goes here guys i compleely forget kotlin oh no i only know python i have no idea what im doing afurrea
+    if (angle != targetAngle){
+        turnRate = .1;
+    } else{
+        speed = .5;
+    }
+
 
     drive.arcadeDrive(-speed, turnRate);
   }
 }
+
+//cringe this code is so cringe 
+// doodoo fart poopoo
+// poo

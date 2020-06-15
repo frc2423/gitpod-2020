@@ -90,10 +90,12 @@ public class Robot extends TimedRobot {
     // set these values to change speed and turn rate of the robot
     double speed = 0;
     double turnRate = 0;
-    if (angle < targetAngle - 20 && angle > targetAngle + 20){
+    angle = Math.abs(angle%360);
+    targetAngle = Math.abs(targetAngle%360);
+    if (angle > targetAngle -10 && angle < targetAngle + 10){
         turnRate = 0.1;
     } else{
-        speed = 0.7;
+        speed = 0.5;
     }
     drive.arcadeDrive(speed, turnRate);
   }
