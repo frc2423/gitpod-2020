@@ -12,7 +12,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.XboxController;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SPI;
 
 public class Robot extends TimedRobot {
   private CANSparkMax flMotor;
@@ -22,49 +23,54 @@ public class Robot extends TimedRobot {
 
   private DifferentialDrive drive;
 
-  private XboxController controller;
-
+  private AHRS gyro;
 
   @Override
   public void robotInit() {
 
+    // create an object to control each motor
     flMotor = new CANSparkMax(1, MotorType.kBrushless);
     frMotor = new CANSparkMax(2, MotorType.kBrushless);
     blMotor = new CANSparkMax(3, MotorType.kBrushless);
     brMotor = new CANSparkMax(4, MotorType.kBrushless);
 
+    // group the motors
     SpeedControllerGroup left = new SpeedControllerGroup(flMotor, blMotor);
     SpeedControllerGroup right = new SpeedControllerGroup(frMotor, brMotor);
 
+    // use the drive object for easily controlling all the motors with arcade or tank drive
     drive = new DifferentialDrive(left, right);
 
-    controller = new XboxController(0);
+    // use this to get angle readings from the navx's gyro sensor
+    gyro = new AHRS(SPI.Port.kMXP);
   }
 
   @Override
   public void autonomousInit() {
-   
+    // Resets the gyro angle to 0. Should be called at the beginning of each challenge
+    gyro.reset();
   }
 
-  
+  public double getTargetAngle() {
+    return 45;
+  }
+
   @Override
   public void autonomousPeriodic() {
-    
-  }
 
-  
-  @Override
-  public void teleopInit() {
-  }
+    // use this to get the current heading of the robot
+    double angle = gyro.getAngle();
 
-  
-  @Override
-  public void teleopPeriodic() {
-    double speed = controller.getY();
-    double turnRate = controller.getX();
+    // use this to get the angle the robot needs to be pointed at to face Amory
+    double targetAngle = getTargetAngle();
 
-    System.out.println("WEooEE");
+    // print out the angle reading. For Testing purposes.
+    System.out.println("angle: " + angle);
 
-    drive.arcadeDrive(-speed * .25, -turnRate * .5);
+    // set these values to change speed and turn rate of the robot
+    double speed = 0;
+    double turnRate = 0;
+
+    drive.arcadeDrive(-speed, turnRate);
   }
 }
