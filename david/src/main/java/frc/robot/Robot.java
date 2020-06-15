@@ -93,9 +93,9 @@ public class Robot extends TimedRobot {
     angle = Math.abs(angle%360);
     targetAngle = Math.abs(targetAngle%360);
     if (angle > targetAngle -10 && angle < targetAngle + 10){
-        turnRate = 0.1;
+        speed = 0.5
     } else{
-        speed = 0.5;
+        turnRate = 0.5;
     }
     drive.arcadeDrive(speed, turnRate);
   }
