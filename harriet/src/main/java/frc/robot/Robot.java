@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
     double turnRate = 0;
 
     if (!linedUp) {
-        turnRate = diff / 100;
+        turnRate = diff/100;
     } else if (linedUp) {
         speed = 0.5;
     }

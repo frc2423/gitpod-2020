@@ -93,6 +93,9 @@ public class Robot extends TimedRobot {
     System.out.println("current angle: " + angle);
     System.out.println("target angle: " + targetAngle);
 
+    targetAngle = Math.abs(targetAngle) % 360;
+    angle = angle % 360;
+
     // set these values to change speed and turn rate of the robot
     if (targetAngle > angle - 10 && targetAngle < angle + 10) {
         speed = -0.6;
