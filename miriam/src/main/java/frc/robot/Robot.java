@@ -92,9 +92,9 @@ public class Robot extends TimedRobot {
     double turnRate = 0;
     // i know something goes here guys i compleely forget kotlin oh no i only know python i have no idea what im doing afurrea
     if (angle != targetAngle){
-        turnRate = .1;
+        turnRate = 0.1;
     } else{
-        speed = .5;
+        speed = 0.5;
     }
 
 
