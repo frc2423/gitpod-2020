@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
     System.out.println("target angle: " + targetAngle);
 
     // set these values to change speed and turn rate of the robot
-    double speed = 0.3;
+    double speed = 1;
     double turnRate = 0;
 
     if (angle > targetAngle + 5) {
@@ -94,6 +94,7 @@ public class Robot extends TimedRobot {
     } else if (angle < targetAngle - 5) {
       turnRate = .5;
     } else {
+        
     }
 
     drive.arcadeDrive(speed, turnRate);
