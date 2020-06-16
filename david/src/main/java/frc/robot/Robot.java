@@ -95,9 +95,6 @@ public class Robot extends TimedRobot {
       turnRate = .6;
     } else {
     }
-
-    drive.arcadeDrive(speed, turnRate);
-  }
     drive.arcadeDrive(speed, turnRate);
   }
 
