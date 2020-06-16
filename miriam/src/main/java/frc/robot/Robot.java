@@ -93,8 +93,7 @@ public class Robot extends TimedRobot {
       turnRate = -.5;
     } else if (angle < targetAngle - 5) {
       turnRate = .5;
-    } else {
-      speed = .3;
+
     }
 // ayo this code kinda cringe 
     drive.arcadeDrive(speed, turnRate);
