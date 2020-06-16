@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
     System.out.println("target angle: " + targetAngle);
 
     // set these values to change speed and turn rate of the robot
-    double speed = 0;
+    double speed = 0.1;
     double turnRate = 0;
 
     if (angle > targetAngle + 5) {
