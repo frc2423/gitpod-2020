@@ -20,12 +20,13 @@ import edu.wpi.first.wpilibj.XboxController;
 
 
 /**
- * Challenge 3
+ * Challenge 1
  * 
- * AMORY'S REVENGE! For this challenge we'll be playing a game of kick the robot!
- * You'll need to make the robot cross the room while Amory is kicking it! The robot
- * must stay in bounds and the robot's speed will be capped. This challenge will be
- * timed, and whoever can cross the room in the shortest amount of time wins!
+ * Use the front distance sensor and a state machine to stop the robot before crashing
+ * into a wall.
+ * 
+ * State 1: Drive forward. Transition to state 2 when distance sensor senses a close object
+ * State 2: Stop.
  */
 
 public class Robot extends TimedRobot {
@@ -37,11 +38,12 @@ public class Robot extends TimedRobot {
   private DifferentialDrive drive;
 
   private AHRS gyro;
+  private Ultrasonic backDistanceSensor;
+  private Ultrasonic frontDistanceSensor;
 
   private XboxController controller;
 
-  private Ultrasonic backDistanceSensor;
-  private Ultrasonic frontDistanceSensor;
+  private String state;
 
   @Override
   public void robotInit() {
@@ -69,6 +71,8 @@ public class Robot extends TimedRobot {
 
     backDistanceSensor.setAutomaticMode(true);
     frontDistanceSensor.setAutomaticMode(true);
+
+    state = "turnRate";
   }
 
   public double getFrontDistance() {
@@ -95,6 +99,26 @@ public class Robot extends TimedRobot {
     // set these values to change speed and turn rate of the robot
     double speed = 0.0;
     double turnRate = 0.0;
+
+    // Example state machine which makes the robot rotate left and right
+    if (state == "turnRight") {
+      // turn right code
+      turnRate = .3;
+
+      // transition code
+      if (angle > 360) {
+        state = "turnLeft";
+      }
+    } 
+    else if (state == "turnLeft") {
+      // turn left code
+      turnRate = -.3;
+
+      // transition code
+      if (angle < -360) {
+        state = "turnRight";
+      }
+    }
 
     drive.arcadeDrive(speed, turnRate);
   }
