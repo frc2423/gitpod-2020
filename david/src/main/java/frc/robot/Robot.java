@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
     backDistanceSensor.setAutomaticMode(true);
     frontDistanceSensor.setAutomaticMode(true);
 
-    state = "turnRate";
+    state = "turnRight";
   }
 
   public double getFrontDistance() {
@@ -103,19 +103,20 @@ public class Robot extends TimedRobot {
     // Example state machine which makes the robot rotate left and right
     if (state == "turnRight") {
       // turn right code
-      turnRate = .3;
+      turnRate = .4;
 
       // transition code
-      if (angle > 360) {
+      if (angle > 60) {
         state = "turnLeft";
       }
     } 
     else if (state == "turnLeft") {
       // turn left code
-      turnRate = -.3;
+      turnRate = -.4;
 
       // transition code
-      if (angle < -360) {
+      if (angle < -60
+      ) {
         state = "turnRight";
       }
     }
@@ -139,6 +140,6 @@ public class Robot extends TimedRobot {
     double speed = controller.getY();
     double turnRate = controller.getX();
 
-    drive.arcadeDrive(-speed * .5, turnRate * .5);
+    drive.arcadeDrive(-speed * .3, turnRate * .5);
   }
 }
