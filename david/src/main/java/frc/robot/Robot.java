@@ -8,16 +8,16 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Ultrasonic;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
+
 
 /**
  * Challenge 3
@@ -38,9 +38,10 @@ public class Robot extends TimedRobot {
 
   private AHRS gyro;
 
-  private NetworkTableEntry targetAngleEntry;
-
   private XboxController controller;
+
+  private Ultrasonic backDistanceSensor;
+  private Ultrasonic frontDistanceSensor;
 
   @Override
   public void robotInit() {
@@ -61,40 +62,40 @@ public class Robot extends TimedRobot {
     // use this to get angle readings from the navx's gyro sensor
     gyro = new AHRS(SPI.Port.kMXP);
 
-    NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    NetworkTable table = inst.getTable("robot");
-    targetAngleEntry = table.getEntry("targetAngle");
-
     controller = new XboxController(0);
+
+    backDistanceSensor = new Ultrasonic(0,1);
+    frontDistanceSensor = new Ultrasonic(2, 3);
+
+    backDistanceSensor.setAutomaticMode(true);
+    frontDistanceSensor.setAutomaticMode(true);
   }
 
-  public double getTargetAngle() {
-    return 0;
+  public double getFrontDistance() {
+    return frontDistanceSensor.getRangeInches();
+  }
+
+  public double getBackDistance() {
+    return backDistanceSensor.getRangeInches();
+  }
+
+  @Override
+  public void autonomousInit() {
+    // Resets the gyro angle to 0. Should be called at the beginning of each challenge
+    gyro.reset();
   }
 
   @Override
   public void autonomousPeriodic() {
 
-    // use this to get the current heading of the robot
     double angle = gyro.getAngle();
-
-    // use this to get the angle the robot needs to be pointed at to face Amory
-    double targetAngle = getTargetAngle();
-
-    // print out the angle reading. For Testing purposes.
-    System.out.println("current angle: " + angle);
-    System.out.println("target angle: " + targetAngle);
+    double frontDistance = getFrontDistance();
+    double backDistance = getBackDistance();
 
     // set these values to change speed and turn rate of the robot
-    double speed = 0.3;
-    double turnRate = 0;
+    double speed = 0.0;
+    double turnRate = 0.0;
 
-    if (angle > targetAngle + 5) {
-      turnRate = -.6;
-    } else if (angle < targetAngle - 5) {
-      turnRate = .6;
-    } else {
-    }
     drive.arcadeDrive(speed, turnRate);
   }
 
@@ -106,9 +107,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    double frontDistance = getFrontDistance();
+    double backDistance = getBackDistance();
+
+    System.out.println("DISTANCE: " + frontDistance + ", " + backDistance);
+
     double speed = controller.getY();
     double turnRate = controller.getX();
 
-    drive.arcadeDrive(-speed, turnRate);
+    drive.arcadeDrive(-speed * .5, turnRate * .5);
   }
 }
