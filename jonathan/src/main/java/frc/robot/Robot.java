@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
     backDistanceSensor.setAutomaticMode(true);
     frontDistanceSensor.setAutomaticMode(true);
 
-    state = "turnRight";
+    state = "moveForward";
   }
 
   public double getFrontDistance() {
@@ -107,7 +107,7 @@ public class Robot extends TimedRobot {
       speed = 0.3;
 
       // transition code
-      if (frontDistance < 7.0) {
+      if (frontDistance < 15.0) {
         state = "stop";
       }
     } 
@@ -117,10 +117,23 @@ public class Robot extends TimedRobot {
       speed = 0.0;
 
       // transition code
- //     if () {
- //      state = "turnRight";
- //    }
+      if (frontDistance < 15.0) {
+       state = "moveForward";
+     }
+      if (backDistance < 15.0) {
+        state = "moveBackward";
+      }
     }
+    else if (state == "moveForward") {
+      // turn right code
+      turnRate = 0.0;
+      speed = -0.3;
+
+      // transition code
+      if (backDistance < 15.0) {
+        state = "stop";
+      }
+    } 
 
     drive.arcadeDrive(speed, turnRate);
   }
