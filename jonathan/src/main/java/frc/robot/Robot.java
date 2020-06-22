@@ -8,24 +8,25 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Ultrasonic;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
 
+
 /**
- * Challenge 3
+ * Challenge 1
  * 
- * AMORY'S REVENGE! For this challenge we'll be playing a game of kick the robot!
- * You'll need to make the robot cross the room while Amory is kicking it! The robot
- * must stay in bounds and the robot's speed will be capped. This challenge will be
- * timed, and whoever can cross the room in the shortest amount of time wins!
+ * Use the front distance sensor and a state machine to stop the robot before crashing
+ * into a wall.
+ * 
+ * State 1: Drive forward. Transition to state 2 when distance sensor senses a close object
+ * State 2: Stop.
  */
 
 public class Robot extends TimedRobot {
@@ -37,10 +38,12 @@ public class Robot extends TimedRobot {
   private DifferentialDrive drive;
 
   private AHRS gyro;
-
-  private NetworkTableEntry targetAngleEntry;
+  private Ultrasonic backDistanceSensor;
+  private Ultrasonic frontDistanceSensor;
 
   private XboxController controller;
+
+  private String state;
 
   @Override
   public void robotInit() {
@@ -61,40 +64,61 @@ public class Robot extends TimedRobot {
     // use this to get angle readings from the navx's gyro sensor
     gyro = new AHRS(SPI.Port.kMXP);
 
-    NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    NetworkTable table = inst.getTable("robot");
-    targetAngleEntry = table.getEntry("targetAngle");
-
     controller = new XboxController(0);
+
+    backDistanceSensor = new Ultrasonic(0,1);
+    frontDistanceSensor = new Ultrasonic(2, 3);
+
+    backDistanceSensor.setAutomaticMode(true);
+    frontDistanceSensor.setAutomaticMode(true);
+
+    state = "turnRight";
   }
 
-  public double getTargetAngle() {
-    return 0;
+  public double getFrontDistance() {
+    return frontDistanceSensor.getRangeInches();
+  }
+
+  public double getBackDistance() {
+    return backDistanceSensor.getRangeInches();
+  }
+
+  @Override
+  public void autonomousInit() {
+    // Resets the gyro angle to 0. Should be called at the beginning of each challenge
+    gyro.reset();
   }
 
   @Override
   public void autonomousPeriodic() {
 
-    // use this to get the current heading of the robot
     double angle = gyro.getAngle();
-
-    // use this to get the angle the robot needs to be pointed at to face Amory
-    double targetAngle = getTargetAngle();
-
-    // print out the angle reading. For Testing purposes.
-    System.out.println("current angle: " + angle);
-    System.out.println("target angle: " + targetAngle);
+    double frontDistance = getFrontDistance();
+    double backDistance = getBackDistance();
 
     // set these values to change speed and turn rate of the robot
-    double speed = 0.2;
-    double turnRate = 0;
+    double speed = 0.0;
+    double turnRate = 0.0;
 
-    if (angle > targetAngle + 5) {
-      turnRate = -.6;
-    } else if (angle < targetAngle - 5) {
-      turnRate = .6;
-    } else {
-      speed = .3;
+    // Example state machine which makes the robot rotate left and right
+    if (state == "turnRight") {
+      // turn right code
+      turnRate = .4;
+
+      // transition code
+      if (angle > 60) {
+        state = "turnLeft";
+      }
+    } 
+    else if (state == "turnLeft") {
+      // turn left code
+      turnRate = -.4;
+
+      // transition code
+      if (angle < -60
+      ) {
+        state = "turnRight";
+      }
     }
 
     drive.arcadeDrive(speed, turnRate);
@@ -108,9 +132,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    double frontDistance = getFrontDistance();
+    double backDistance = getBackDistance();
+
+    System.out.println("DISTANCE: " + frontDistance + ", " + backDistance);
+
     double speed = controller.getY();
     double turnRate = controller.getX();
 
-    drive.arcadeDrive(-speed, turnRate);
+    drive.arcadeDrive(-speed * .3, turnRate * .5);
   }
 }
