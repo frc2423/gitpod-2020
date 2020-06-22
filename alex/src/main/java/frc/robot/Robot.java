@@ -115,8 +115,7 @@ public class Robot extends TimedRobot {
       turnRate = -.4;
 
       // transition code
-      if (angle < -60
-      ) {
+      if (angle < -60) {
         state = "turnRight";
       }
     }

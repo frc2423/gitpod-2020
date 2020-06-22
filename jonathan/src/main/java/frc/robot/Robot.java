@@ -101,24 +101,25 @@ public class Robot extends TimedRobot {
     double turnRate = 0.0;
 
     // Example state machine which makes the robot rotate left and right
-    if (state == "turnRight") {
+    if (state == "moveForward") {
       // turn right code
-      turnRate = .4;
+      turnRate = 0.0;
+      speed = 0.3;
 
       // transition code
-      if (angle > 60) {
-        state = "turnLeft";
+      if (frontDistance < 7.0) {
+        state = "stop";
       }
     } 
-    else if (state == "turnLeft") {
+    else if (state == "stop") {
       // turn left code
-      turnRate = -.4;
+      turnRate = 0.0;
+      speed = 0.0;
 
       // transition code
-      if (angle < -60
-      ) {
-        state = "turnRight";
-      }
+ //     if () {
+ //      state = "turnRight";
+ //    }
     }
 
     drive.arcadeDrive(speed, turnRate);
