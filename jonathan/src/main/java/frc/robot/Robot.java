@@ -120,7 +120,7 @@ public class Robot extends TimedRobot {
       // transition code
     }
 
-    else if (state == "rotateRight") {
+    else if (state == "turnRight") {
         turnRate = 0.3;
         speed = 0.0;
 
