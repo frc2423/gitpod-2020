@@ -108,7 +108,7 @@ public class Robot extends TimedRobot {
 
       // transition code
       if (frontDistance < 15.0) {
-        state = "stop";
+        state = "moveBackward";
       }
     } 
     else if (state == "stop") {
@@ -118,10 +118,10 @@ public class Robot extends TimedRobot {
 
       // transition code
       if (frontDistance < 15.0) {
-       state = "moveForward";
+       state = "moveBackward";
      }
       if (backDistance < 15.0) {
-        state = "moveBackward";
+        state = "moveForward";
       }
     }
     else if (state == "moveForward") {
@@ -131,7 +131,7 @@ public class Robot extends TimedRobot {
 
       // transition code
       if (backDistance < 15.0) {
-        state = "stop";
+        state = "moveForward";
       }
     } 
 
