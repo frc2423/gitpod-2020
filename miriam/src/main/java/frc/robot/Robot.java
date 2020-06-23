@@ -104,7 +104,7 @@ public class Robot extends TimedRobot {
     if (state == "moveForward") {
       speed = .3;
 
-        if (frontDistance < 8) {  
+        if (frontDistance < 15) {  
             gyro.reset();
             state = "turnRight";
         }
@@ -113,7 +113,7 @@ public class Robot extends TimedRobot {
     if (state == "turnRight"){
         turnRate = .5;
     
-        if (angle >= 20 && angle <= 60){
+        if (angle >= 40 && angle <= 60){
             state = "moveForward";
         }
     

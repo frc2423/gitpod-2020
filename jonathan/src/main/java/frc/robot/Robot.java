@@ -130,7 +130,7 @@ public class Robot extends TimedRobot {
         turnRate = 0.3;
         speed = 0.0;
 
-        if (angle < 33 && angle > 27) {
+        if (angle < 63 && angle > 57) {
             state = "moveForward";
         }
     }
