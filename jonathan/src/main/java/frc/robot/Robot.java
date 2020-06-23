@@ -111,7 +111,6 @@ public class Robot extends TimedRobot {
       // transition code
       if (frontDistance < 15.0) {
         gyro.reset();
-        mod = mod * 1;
         state = "turnRight";
       }
     } 
@@ -125,7 +124,7 @@ public class Robot extends TimedRobot {
 
     else if (state == "turnRight") {
     
-        turnRate = 0.3 * mod;
+        turnRate = 0.3;
         speed = 0.0;
 
         if (angle < 33 && angle > 27) {
