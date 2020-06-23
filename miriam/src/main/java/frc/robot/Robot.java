@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
     backDistanceSensor.setAutomaticMode(true);
     frontDistanceSensor.setAutomaticMode(true);
 
-    state = "turnRight";
+    state = "moveForward";
   }
 
   public double getFrontDistance() {
@@ -102,12 +102,21 @@ public class Robot extends TimedRobot {
 
     // Example state machine which makes the robot rotate left and right
     if (state == "moveForward") {
-      speed = .4;
+      speed = .3;
 
         if (frontDistance < 8) { 
-            state = "stop"; 
+            state = "moveBackwards"; 
         }
     }    
+    if (state == "moveBackwards"){
+        speed = -.3;
+
+        if (backDistance < 8) {
+            state = "moveForward";
+        }
+            
+    }
+
     if (state == "stop") {
         speed = 0; 
     }

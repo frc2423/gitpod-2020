@@ -108,7 +108,8 @@ public class Robot extends TimedRobot {
 
       // transition code
       if (frontDistance < 15.0) {
-        state = "moveBackward";
+        gyro.reset();
+        state = "turnRight";
       }
     } 
     else if (state == "stop") {
@@ -117,14 +118,18 @@ public class Robot extends TimedRobot {
       speed = 0.0;
 
       // transition code
-      if (frontDistance < 15.0) {
-       state = "moveBackward";
-     }
-      if (backDistance < 15.0) {
-        state = "moveForward";
-      }
     }
-    else if (state == "moveForward") {
+
+    else if (state == "rotateRight") {
+        turnRate = 0.3;
+        speed = 0.0;
+
+        if (angle < 93 && angle > 87) {
+            state = "moveForward";
+        }
+    }
+
+    else if (state == "moveBackward") {
       // turn right code
       turnRate = 0.0;
       speed = -0.3;
