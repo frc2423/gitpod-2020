@@ -99,6 +99,7 @@ public class Robot extends TimedRobot {
     // set these values to change speed and turn rate of the robot
     double speed = 0.0;
     double turnRate = 0.0;
+    int mod = -1;
 
     // Example state machine which makes the robot rotate left and right
     if (state == "moveForward") {
@@ -109,6 +110,7 @@ public class Robot extends TimedRobot {
       // transition code
       if (frontDistance < 15.0) {
         gyro.reset();
+        mod = mod * -1;
         state = "turnRight";
       }
     } 
@@ -121,10 +123,11 @@ public class Robot extends TimedRobot {
     }
 
     else if (state == "turnRight") {
-        turnRate = 0.3;
-        speed = 0.0;
+    
+        turnRate = 0.3 * mod;
+        speed = 0.2;
 
-        if (angle < 93 && angle > 87) {
+        if (angle < 183 && angle > 177) {
             state = "moveForward";
         }
     }

@@ -105,22 +105,21 @@ public class Robot extends TimedRobot {
       speed = .3;
 
         if (frontDistance < 8) {
+            gyro.reset();
             state = "turnRate"; }
     }    
     if (state == "turnRate") {
         speed = 0;
         turnRate = 0.3; 
 
-        if (frontDistance < 8) {
-            state = "moveForward"; }
+        if (angle >= 90) {
+            state = "moveForward";
         }
     }
 
     drive.arcadeDrive(speed, turnRate);
   }
 
-    drive.arcadeDrive(speed, turnRate);
-  }
 
   @Override
   public void teleopInit() {
