@@ -105,12 +105,13 @@ public class Robot extends TimedRobot {
       speed = .3;
 
         if (frontDistance < 8) {
-            state = "moveBackward"; }
+            state = "turnRate"; }
     }    
-    if (state == "moveBackward") {
-        speed = -.3; 
+    if (state == "turnRate") {
+        speed = 0;
+        turnRate = 0.3; 
 
-        if (backDistance < 8) {
+        if (frontDistance < 8) {
             state = "moveForward"; }
         }
     }
