@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
     backDistanceSensor.setAutomaticMode(true);
     frontDistanceSensor.setAutomaticMode(true);
 
-    state = "turnRight";
+    state = "moveForward";
   }
 
   public double getFrontDistance() {
