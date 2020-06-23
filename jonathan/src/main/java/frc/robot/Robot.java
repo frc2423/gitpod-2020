@@ -87,6 +87,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     // Resets the gyro angle to 0. Should be called at the beginning of each challenge
     gyro.reset();
+    state = "moveForward";
   }
 
   @Override
@@ -99,7 +100,7 @@ public class Robot extends TimedRobot {
     // set these values to change speed and turn rate of the robot
     double speed = 0.0;
     double turnRate = 0.0;
-    int mod = -1;
+    int mod = 1;
 
     // Example state machine which makes the robot rotate left and right
     if (state == "moveForward") {
@@ -110,7 +111,7 @@ public class Robot extends TimedRobot {
       // transition code
       if (frontDistance < 15.0) {
         gyro.reset();
-        mod = mod * -1;
+        mod = mod * 1;
         state = "turnRight";
       }
     } 
@@ -125,9 +126,9 @@ public class Robot extends TimedRobot {
     else if (state == "turnRight") {
     
         turnRate = 0.3 * mod;
-        speed = 0.2;
+        speed = 0.0;
 
-        if (angle < 183 && angle > 177) {
+        if (angle < 33 && angle > 27) {
             state = "moveForward";
         }
     }

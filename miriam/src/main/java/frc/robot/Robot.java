@@ -105,13 +105,12 @@ public class Robot extends TimedRobot {
       speed = .3;
 
         if (frontDistance < 8) {  
-            gyro.reset();
             state = "turnRight";
         }
     }    
 
     if (state == "turnRight"){
-        turnRate = .3;
+        turnRate = .5;
     
         if (angle >= 90 ){
             state = "moveForward";
@@ -147,3 +146,13 @@ public class Robot extends TimedRobot {
     drive.arcadeDrive(-speed * .3, turnRate * .5);
   }
 }
+
+
+
+
+
+
+
+
+// AAA A A A. A A A. A. A A. A A A. AAAAA A A. A A. A A. A A AAAAAAAAAAA. A A A. A A A A A A A A. A A AAAAAAAAAAAA. A A A 
+// A A A AAAAAAAAAAAA A.   AA A. A. A. A A A A A 
