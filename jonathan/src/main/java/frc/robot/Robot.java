@@ -22,11 +22,6 @@ import edu.wpi.first.wpilibj.XboxController;
 /**
  * Challenge 1
  * 
- * Use the front distance sensor and a state machine to stop the robot before crashing
- * into a wall.
- * 
- * State 1: Drive forward. Transition to state 2 when distance sensor senses a close object
- * State 2: Stop.
  */
 
 public class Robot extends TimedRobot {
@@ -36,10 +31,6 @@ public class Robot extends TimedRobot {
   private CANSparkMax brMotor;
 
   private DifferentialDrive drive;
-
-  private AHRS gyro;
-  private Ultrasonic backDistanceSensor;
-  private Ultrasonic frontDistanceSensor;
 
   private XboxController controller;
 
@@ -61,85 +52,19 @@ public class Robot extends TimedRobot {
     // use the drive object for easily controlling all the motors with arcade or tank drive
     drive = new DifferentialDrive(left, right);
 
-    // use this to get angle readings from the navx's gyro sensor
-    gyro = new AHRS(SPI.Port.kMXP);
-
     controller = new XboxController(0);
 
-    backDistanceSensor = new Ultrasonic(0,1);
-    frontDistanceSensor = new Ultrasonic(2, 3);
-
-    backDistanceSensor.setAutomaticMode(true);
-    frontDistanceSensor.setAutomaticMode(true);
-
-    state = "turnRight";
-  }
-
-  public double getFrontDistance() {
-    return frontDistanceSensor.getRangeInches();
-  }
-
-  public double getBackDistance() {
-    return backDistanceSensor.getRangeInches();
+    state = "";
   }
 
   @Override
   public void autonomousInit() {
-    // Resets the gyro angle to 0. Should be called at the beginning of each challenge
-    gyro.reset();
+
   }
 
   @Override
   public void autonomousPeriodic() {
 
-    double angle = gyro.getAngle();
-    double frontDistance = getFrontDistance();
-    double backDistance = getBackDistance();
-
-    // set these values to change speed and turn rate of the robot
-    double speed = 0.0;
-    double turnRate = 0.0;
-
-    // Example state machine which makes the robot rotate left and right
-    if (state == "turnRight") {
-      // turn right code
-      turnRate = .4;
-
-      // transition code
-      if (angle > 60) {
-        state = "turnLeft";
-      }
-    } 
-    else if (state == "turnLeft") {
-      // turn left code
-      turnRate = -.4;
-
-      // transition code
-      if (angle < -60
-      ) {
-        state = "turnRight";
-      }
-    }
-
-    drive.arcadeDrive(speed, turnRate);
   }
 
-  @Override
-  public void teleopInit() {
-    // Resets the gyro angle to 0. Should be called at the beginning of each challenge
-    gyro.reset();
-  }
-
-  @Override
-  public void teleopPeriodic() {
-    double frontDistance = getFrontDistance();
-    double backDistance = getBackDistance();
-
-    System.out.println("DISTANCE: " + frontDistance + ", " + backDistance);
-
-    double speed = controller.getY();
-    double turnRate = controller.getX();
-
-    drive.arcadeDrive(-speed * .3, turnRate * .5);
-  }
 }
