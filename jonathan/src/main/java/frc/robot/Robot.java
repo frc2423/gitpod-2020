@@ -22,6 +22,9 @@ import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 
 /**
@@ -48,7 +51,7 @@ public class Robot extends TimedRobot {
 
   private DifferentialDriveOdometry odometry;
 
-  
+  private NetworkTable table;
 
   @Override
   public void robotInit() {
@@ -72,6 +75,9 @@ public class Robot extends TimedRobot {
     controller = new XboxController(0);
 
     odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(0));
+
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    table = inst.getTable("target");
   }
 
   Translation2d getTranslation() {
@@ -79,12 +85,13 @@ public class Robot extends TimedRobot {
   }
 
   Translation2d getTargetTranslation(int targetNumber) {
-    // TODO: Use NetworkTables to get this value
-    return null;
+    double x = table.getEntry("x").getDoubleArray(new double[]{0})[targetNumber];
+    double y = table.getEntry("y").getDoubleArray(new double[]{0})[targetNumber];
+    return new Translation2d(x, y);
   }
 
   int getTargetCount() {
-    return 0;
+    return (int)table.getEntry("count").getDouble(1);
   }
 
   double getAngle() {
@@ -92,7 +99,12 @@ public class Robot extends TimedRobot {
   }
 
   double normalizeAngle(double angle) {
-    // TODO: Write the math for this
+    angle = angle % 360;
+    if (angle > 180) {
+      return angle - 360;
+    } else if (angle < -180) {
+      return angle + 360;
+    }
     return angle;
   }
 
@@ -112,14 +124,16 @@ public class Robot extends TimedRobot {
 
   void updateOdometry() {
     // TODO: Get the actual encoder readings and convert to feet
+    int TICKS_PER_FOOT = 100;
     double angle = gyro.getAngle();
-    double leftDistanceFeet = 0;
-    double rightDistanceFeet = 0;
+    double leftDistanceFeet = flMotor.getEncoder().getPosition() / TICKS_PER_FOOT;
+    double rightDistanceFeet = frMotor.getEncoder().getPosition() / TICKS_PER_FOOT;
     odometry.update(Rotation2d.fromDegrees(angle), leftDistanceFeet, rightDistanceFeet);
   }
 
   void resetOdometry() {
-    // TODO: reset encoders
+    flMotor.getEncoder().setPosition(0);
+    frMotor.getEncoder().setPosition(0);
 
     double angle = gyro.getAngle();
     odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(angle));
