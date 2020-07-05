@@ -8,15 +8,20 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Ultrasonic;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.XboxController;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.XboxController;
+
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+
 
 
 /**
@@ -35,15 +40,15 @@ public class Robot extends TimedRobot {
   private CANSparkMax blMotor;
   private CANSparkMax brMotor;
 
-  private DifferentialDrive drive;
-
   private AHRS gyro;
-  private Ultrasonic backDistanceSensor;
-  private Ultrasonic frontDistanceSensor;
+
+  private DifferentialDrive drive;
 
   private XboxController controller;
 
-  private String state;
+  private DifferentialDriveOdometry odometry;
+
+  
 
   @Override
   public void robotInit() {
@@ -66,76 +71,84 @@ public class Robot extends TimedRobot {
 
     controller = new XboxController(0);
 
-    backDistanceSensor = new Ultrasonic(0,1);
-    frontDistanceSensor = new Ultrasonic(2, 3);
-
-    backDistanceSensor.setAutomaticMode(true);
-    frontDistanceSensor.setAutomaticMode(true);
-
-    state = "turnRight";
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(0));
   }
 
-  public double getFrontDistance() {
-    return frontDistanceSensor.getRangeInches();
+  Translation2d getTranslation() {
+    return odometry.getPoseMeters().getTranslation();
   }
 
-  public double getBackDistance() {
-    return backDistanceSensor.getRangeInches();
+  Translation2d getTargetTranslation(int targetNumber) {
+    // TODO: Use NetworkTables to get this value
+    return null;
+  }
+
+  int getTargetCount() {
+    return 0;
+  }
+
+  double getAngle() {
+    return normalizeAngle(gyro.getAngle());
+  }
+
+  double normalizeAngle(double angle) {
+    // TODO: Write the math for this
+    return angle;
+  }
+
+  double getRotationBetweenPoints(Translation2d start, Translation2d end) {
+    Translation2d delta = end.minus(start);
+    Rotation2d rotation = new Rotation2d(delta.getX(), delta.getY());
+    return normalizeAngle(rotation.getDegrees());
+  }
+
+  double getDistanceBetweenPoints(Translation2d start, Translation2d end) {
+    return start.getDistance(end);
+  }
+
+  double getDistanceFromTarget(int targetNumber) {
+    return getDistanceBetweenPoints(getTranslation(), getTargetTranslation(targetNumber));
+  }
+
+  void updateOdometry() {
+    // TODO: Get the actual encoder readings and convert to feet
+    double angle = gyro.getAngle();
+    double leftDistanceFeet = 0;
+    double rightDistanceFeet = 0;
+    odometry.update(Rotation2d.fromDegrees(angle), leftDistanceFeet, rightDistanceFeet);
+  }
+
+  void resetOdometry() {
+    // TODO: reset encoders
+
+    double angle = gyro.getAngle();
+    odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(angle));
   }
 
   @Override
   public void autonomousInit() {
-    // Resets the gyro angle to 0. Should be called at the beginning of each challenge
     gyro.reset();
+    resetOdometry();
   }
 
   @Override
   public void autonomousPeriodic() {
 
-    double angle = gyro.getAngle();
-    double frontDistance = getFrontDistance();
-    double backDistance = getBackDistance();
-
     // set these values to change speed and turn rate of the robot
     double speed = 0.0;
     double turnRate = 0.0;
-
-    // Example state machine which makes the robot rotate left and right
-    if (state == "turnRight") {
-      // turn right code
-      turnRate = .4;
-
-      // transition code
-      if (angle > 60) {
-        state = "turnLeft";
-      }
-    } 
-    else if (state == "turnLeft") {
-      // turn left code
-      turnRate = -.4;
-
-      // transition code
-      if (angle < -60
-      ) {
-        state = "turnRight";
-      }
-    }
 
     drive.arcadeDrive(speed, turnRate);
   }
 
   @Override
   public void teleopInit() {
-    // Resets the gyro angle to 0. Should be called at the beginning of each challenge
     gyro.reset();
+    resetOdometry();
   }
 
   @Override
   public void teleopPeriodic() {
-    double frontDistance = getFrontDistance();
-    double backDistance = getBackDistance();
-
-    System.out.println("DISTANCE: " + frontDistance + ", " + backDistance);
 
     double speed = controller.getY();
     double turnRate = controller.getX();
