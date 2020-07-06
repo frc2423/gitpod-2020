@@ -8,25 +8,28 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Ultrasonic;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.XboxController;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.XboxController;
+
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 
 /**
  * Challenge 1
  * 
- * Use the front distance sensor and a state machine to stop the robot before crashing
- * into a wall.
- * 
- * State 1: Drive forward. Transition to state 2 when distance sensor senses a close object
- * State 2: Stop.
  */
 
 public class Robot extends TimedRobot {
@@ -35,15 +38,15 @@ public class Robot extends TimedRobot {
   private CANSparkMax blMotor;
   private CANSparkMax brMotor;
 
-  private DifferentialDrive drive;
-
   private AHRS gyro;
-  private Ultrasonic backDistanceSensor;
-  private Ultrasonic frontDistanceSensor;
+
+  private DifferentialDrive drive;
 
   private XboxController controller;
 
-  private String state;
+  private DifferentialDriveOdometry odometry;
+
+  private NetworkTable table;
 
   @Override
   public void robotInit() {
@@ -66,76 +69,118 @@ public class Robot extends TimedRobot {
 
     controller = new XboxController(0);
 
-    backDistanceSensor = new Ultrasonic(0,1);
-    frontDistanceSensor = new Ultrasonic(2, 3);
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(0));
 
-    backDistanceSensor.setAutomaticMode(true);
-    frontDistanceSensor.setAutomaticMode(true);
-
-    state = "turnRight";
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    table = inst.getTable("target");
   }
 
-  public double getFrontDistance() {
-    return frontDistanceSensor.getRangeInches();
+  Translation2d getTranslation() {
+    return odometry.getPoseMeters().getTranslation();
   }
 
-  public double getBackDistance() {
-    return backDistanceSensor.getRangeInches();
+  Translation2d getTargetTranslation(int targetNumber) {
+    double x = table.getEntry("x").getDoubleArray(new double[]{0})[targetNumber];
+    double y = table.getEntry("y").getDoubleArray(new double[]{0})[targetNumber];
+    return new Translation2d(x, y);
+  }
+
+  int getTargetCount() {
+    return (int)table.getEntry("count").getDouble(1);
+  }
+
+  double getAngle() {
+    return normalizeAngle(gyro.getAngle());
+  }
+
+  double getAngleDelta(double start, double end) {
+    start = normalizeAngle(start);
+    end = normalizeAngle(end);
+
+    double delta = end - start;
+
+    if (delta < -180) {
+      return delta + 360;
+    } else if (delta > 180) {
+      return delta - 360;
+    }
+
+    return delta;
+  }
+
+  double normalizeAngle(double angle) {
+    angle = angle % 360;
+    if (angle > 180) {
+      return angle - 360;
+    } else if (angle < -180) {
+      return angle + 360;
+    }
+    return angle;
+  }
+
+  double getRotationBetweenPoints(Translation2d start, Translation2d end) {
+    Translation2d delta = end.minus(start);
+    Rotation2d rotation = new Rotation2d(delta.getX(), delta.getY());
+    return normalizeAngle(rotation.getDegrees());
+  }
+
+  double getRotationFromTarget(int targetNumber) {
+    return getRotationBetweenPoints(getTranslation(), getTargetTranslation(targetNumber));
+  }
+
+  double getDistanceBetweenPoints(Translation2d start, Translation2d end) {
+    return start.getDistance(end);
+  }
+
+  double getDistanceFromTarget(int targetNumber) {
+    return getDistanceBetweenPoints(getTranslation(), getTargetTranslation(targetNumber));
+  }
+
+  void updateOdometry() {
+    double LEFT_TICKS_PER_REV = 14.857;
+    double RIGHT_TICKS_PER_REV = -12.786;
+    double FEET_PER_REV = .666667 * Math.PI;
+    double LEFT_TICKS_PER_FOOT = LEFT_TICKS_PER_REV / FEET_PER_REV;
+    double RIGHT_TICKS_PER_FOOT = RIGHT_TICKS_PER_REV / FEET_PER_REV;
+    double angle = gyro.getAngle();
+    double leftDistanceFeet = flMotor.getEncoder().getPosition() / LEFT_TICKS_PER_FOOT;
+    double rightDistanceFeet = frMotor.getEncoder().getPosition() / RIGHT_TICKS_PER_FOOT;
+    odometry.update(Rotation2d.fromDegrees(angle), leftDistanceFeet, rightDistanceFeet);
+  }
+
+  void resetOdometry() {
+    flMotor.getEncoder().setPosition(0);
+    frMotor.getEncoder().setPosition(0);
+
+    double angle = gyro.getAngle();
+    odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(angle));
   }
 
   @Override
   public void autonomousInit() {
-    // Resets the gyro angle to 0. Should be called at the beginning of each challenge
     gyro.reset();
+    resetOdometry();
   }
 
   @Override
   public void autonomousPeriodic() {
 
-    double angle = gyro.getAngle();
-    double frontDistance = getFrontDistance();
-    double backDistance = getBackDistance();
-
     // set these values to change speed and turn rate of the robot
     double speed = 0.0;
     double turnRate = 0.0;
-
-    // Example state machine which makes the robot rotate left and right
-    if (state == "turnRight") {
-      // turn right code
-      turnRate = .4;
-
-      // transition code
-      if (angle > 60) {
-        state = "turnLeft";
-      }
-    } 
-    else if (state == "turnLeft") {
-      // turn left code
-      turnRate = -.4;
-
-      // transition code
-      if (angle < -60
-      ) {
-        state = "turnRight";
-      }
-    }
 
     drive.arcadeDrive(speed, turnRate);
   }
 
   @Override
   public void teleopInit() {
-    // Resets the gyro angle to 0. Should be called at the beginning of each challenge
     gyro.reset();
+    resetOdometry();
   }
 
   @Override
   public void teleopPeriodic() {
-    double frontDistance = getFrontDistance();
-    double backDistance = getBackDistance();
-
-    System.out.println("DISTANCE: " + frontDistance + ", " + backDistance);
+    updateOdometry();
 
     double speed = controller.getY();
     double turnRate = controller.getX();
