@@ -98,6 +98,21 @@ public class Robot extends TimedRobot {
     return normalizeAngle(gyro.getAngle());
   }
 
+  double getAngleDelta(double start, double end) {
+    start = normalizeAngle(start);
+    end = normalizeAngle(end);
+
+    double delta = end - start;
+
+    if (delta < -180) {
+      return delta + 360;
+    } else if (delta > 180) {
+      return delta - 360;
+    }
+
+    return delta;
+  }
+
   double normalizeAngle(double angle) {
     angle = angle % 360;
     if (angle > 180) {
@@ -114,6 +129,10 @@ public class Robot extends TimedRobot {
     return normalizeAngle(rotation.getDegrees());
   }
 
+  double getRotationFromTarget(int targetNumber) {
+    return getRotationBetweenPoints(getTranslation(), getTargetTranslation(targetNumber));
+  }
+
   double getDistanceBetweenPoints(Translation2d start, Translation2d end) {
     return start.getDistance(end);
   }
@@ -123,11 +142,14 @@ public class Robot extends TimedRobot {
   }
 
   void updateOdometry() {
-    // TODO: Get the actual encoder readings and convert to feet
-    int TICKS_PER_FOOT = 100;
+    double LEFT_TICKS_PER_REV = 14.857;
+    double RIGHT_TICKS_PER_REV = -12.786;
+    double FEET_PER_REV = .666667 * Math.PI;
+    double LEFT_TICKS_PER_FOOT = LEFT_TICKS_PER_REV / FEET_PER_REV;
+    double RIGHT_TICKS_PER_FOOT = RIGHT_TICKS_PER_REV / FEET_PER_REV;
     double angle = gyro.getAngle();
-    double leftDistanceFeet = flMotor.getEncoder().getPosition() / TICKS_PER_FOOT;
-    double rightDistanceFeet = frMotor.getEncoder().getPosition() / TICKS_PER_FOOT;
+    double leftDistanceFeet = flMotor.getEncoder().getPosition() / LEFT_TICKS_PER_FOOT;
+    double rightDistanceFeet = frMotor.getEncoder().getPosition() / RIGHT_TICKS_PER_FOOT;
     odometry.update(Rotation2d.fromDegrees(angle), leftDistanceFeet, rightDistanceFeet);
   }
 
@@ -163,6 +185,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    updateOdometry();
 
     double speed = controller.getY();
     double turnRate = controller.getX();
