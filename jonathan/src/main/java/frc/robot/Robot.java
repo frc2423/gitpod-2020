@@ -30,11 +30,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 /**
  * Challenge 1
  * 
- * Use the front distance sensor and a state machine to stop the robot before crashing
- * into a wall.
- * 
- * State 1: Drive forward. Transition to state 2 when distance sensor senses a close object
- * State 2: Stop.
  */
 
 public class Robot extends TimedRobot {
