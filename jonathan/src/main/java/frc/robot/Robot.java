@@ -198,15 +198,15 @@ public class Robot extends TimedRobot {
             }
     }
 
-    if (state == "MOVE") {
+    else if (state == "MOVE") {
          speed = 0.3;
          turnRate = 0.0;  
-            if (getDistanceFromTarget(0) > .5) {
+            if (getDistanceFromTarget(0) < .5) {
                 state = "STOP";
             }
     }
 
-    if (state == "STOP") {
+    else if (state == "STOP") {
          speed = 0.0;
          turnRate = 0.0;
     }
