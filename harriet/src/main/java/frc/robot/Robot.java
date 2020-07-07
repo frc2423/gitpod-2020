@@ -193,9 +193,9 @@ public class Robot extends TimedRobot {
         speed = 0.0;
         turnRate = 0.0;
 
-        if (current.getDistance(target) > 5 && current.getDistance(target) < -5) {
+        if (current.getDistance(target) > 5 || current.getDistance(target) < -5) {
             state = STATES.GO;
-        } else if (angleDelta > 5.0 && angleDelta < -5.0) {
+        } else if (angleDelta > 5.0 || angleDelta < -5.0) {
             state = STATES.TURN;
         }
     } else if (state == STATES.TURN) {
