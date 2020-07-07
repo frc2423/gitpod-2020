@@ -200,7 +200,7 @@ public class Robot extends TimedRobot {
             }
         } else {
          speed = 0.0;
-         turnRate = 0.3;
+         turnRate = -0.3;
 
          System.out.println("TURN");
          System.out.println(getAngleDelta(getAngle(), targetAngle));
