@@ -167,6 +167,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     gyro.reset();
     resetOdometry();
+    state = STATES.TURN;
   }
 
   @Override
