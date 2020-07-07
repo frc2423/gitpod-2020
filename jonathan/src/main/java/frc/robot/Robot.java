@@ -189,7 +189,7 @@ public class Robot extends TimedRobot {
 
     if (state == "TURN") {
 
-        if (getAngleDelta(getAngle(), targetAngle) > 0) {}
+        if (getAngleDelta(getAngle(), targetAngle) > 0) {
          speed = 0.0;
          turnRate = 0.3;
 
@@ -208,7 +208,7 @@ public class Robot extends TimedRobot {
                 state = "MOVE";
             }
         }
-        }
+        
 
     }
 
