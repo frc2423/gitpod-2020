@@ -48,6 +48,14 @@ public class Robot extends TimedRobot {
 
   private NetworkTable table;
 
+  private String state;
+
+  private Translation2d targetPos;
+
+  private Translation2d currentPos;
+
+  private double targetAngle;
+
   @Override
   public void robotInit() {
 
@@ -160,14 +168,46 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     gyro.reset();
     resetOdometry();
+
+    Translation2d targetPos = getTargetTranslation(0);
+
+    Translation2d currentPos = getTranslation();
+
+    double targetAngle = getRotationFromTarget(0);
+
+    state = "TURN";
   }
 
   @Override
   public void autonomousPeriodic() {
 
     // set these values to change speed and turn rate of the robot
-    double speed = 0.0;
-    double turnRate = 0.0;
+
+    double speed;
+    double turnRate;
+
+    if (state == "TURN") {
+         speed = 0.0;
+         turnRate = 0.1;
+			if (getAngleDelta(getAngle(), targetAngle) < 3) {
+                state = "MOVE";
+            }
+    }
+
+    if (state == "MOVE") {
+         speed = 0.1;
+         turnRate = 0.0;  
+            if (getDistanceFromTarget(0) > 1) {
+                state = "STOP";
+            }
+    }
+
+    if (state == "STOP") {
+         speed = 0.0;
+         turnRate = 0.0;
+    }
+ 
+
 
     drive.arcadeDrive(speed, turnRate);
   }
