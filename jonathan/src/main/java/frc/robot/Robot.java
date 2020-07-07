@@ -188,6 +188,8 @@ public class Robot extends TimedRobot {
     double turnRate = 0;
 
     if (state == "TURN") {
+
+        if (getAngleDelta(getAngle(), targetAngle) > 0) {}
          speed = 0.0;
          turnRate = 0.3;
 
@@ -196,6 +198,18 @@ public class Robot extends TimedRobot {
 			if (getAngleDelta(getAngle(), targetAngle) < 5) {
                 state = "MOVE";
             }
+        } else {
+         speed = 0.0;
+         turnRate = 0.3;
+
+         System.out.println("TURN");
+         System.out.println(getAngleDelta(getAngle(), targetAngle));
+			if (getAngleDelta(getAngle(), targetAngle) > -5) {
+                state = "MOVE";
+            }
+        }
+        }
+
     }
 
     else if (state == "MOVE") {
