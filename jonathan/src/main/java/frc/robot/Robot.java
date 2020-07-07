@@ -169,11 +169,11 @@ public class Robot extends TimedRobot {
     gyro.reset();
     resetOdometry();
 
-    Translation2d targetPos = getTargetTranslation(0);
+     targetPos = getTargetTranslation(0);
 
-    Translation2d currentPos = getTranslation();
+     currentPos = getTranslation();
 
-    double targetAngle = getRotationFromTarget(0);
+     targetAngle = getRotationFromTarget(0);
 
     state = "TURN";
   }
