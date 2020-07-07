@@ -211,6 +211,7 @@ public class Robot extends TimedRobot {
          turnRate = 0.0;
     }
  
+    System.out.println("STATE: " + state);
 
 
     drive.arcadeDrive(speed, turnRate);
