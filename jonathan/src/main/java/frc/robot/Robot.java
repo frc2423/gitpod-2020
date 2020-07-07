@@ -189,16 +189,16 @@ public class Robot extends TimedRobot {
 
     if (state == "TURN") {
          speed = 0.0;
-         turnRate = 0.1;
-			if (getAngleDelta(getAngle(), targetAngle) < 3) {
+         turnRate = 0.3;
+			if (getAngleDelta(getAngle(), targetAngle) < 5) {
                 state = "MOVE";
             }
     }
 
     if (state == "MOVE") {
-         speed = 0.1;
+         speed = 0.3;
          turnRate = 0.0;  
-            if (getDistanceFromTarget(0) > 1) {
+            if (getDistanceFromTarget(0) > .5) {
                 state = "STOP";
             }
     }
