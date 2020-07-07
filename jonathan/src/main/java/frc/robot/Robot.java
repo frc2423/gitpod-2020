@@ -182,6 +182,7 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
 
     // set these values to change speed and turn rate of the robot
+    updateOdometry();
 
     double speed;
     double turnRate;
