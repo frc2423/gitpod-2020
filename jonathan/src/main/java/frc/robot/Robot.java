@@ -184,8 +184,8 @@ public class Robot extends TimedRobot {
     // set these values to change speed and turn rate of the robot
     updateOdometry();
 
-    double speed;
-    double turnRate;
+    double speed = 0;
+    double turnRate = 0;
 
     if (state == "TURN") {
          speed = 0.0;
