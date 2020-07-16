@@ -186,6 +186,14 @@ public class Robot extends TimedRobot {
 
     double speed = 0;
     double turnRate = 0;
+    int targetCount = getTargetCount();
+    int count = 0;
+
+    targetPos = getTargetTranslation(count);
+
+    currentPos = getTranslation();
+
+    targetAngle = getRotationFromTarget(count);
 
     if (state == "TURN") {
 
@@ -208,21 +216,31 @@ public class Robot extends TimedRobot {
                 state = "MOVE";
             }
         }
-        
-
     }
 
     else if (state == "MOVE") {
          speed = 0.3;
          turnRate = 0.0;  
-            if (getDistanceFromTarget(0) < .5) {
-                state = "STOP";
+            if (getDistanceFromTarget(count) < .1) {
+                state = "NEXT";
             }
     }
 
     else if (state == "STOP") {
          speed = 0.0;
          turnRate = 0.0;
+    }
+
+    else if (state == "NEXT") {
+         speed = 0.0;
+         turnRate = 0.0;
+
+        if (count == targetCount - 1) {
+            state = "STOP";
+        } else {
+            count += 1;
+            state = "TURN";
+        }
     }
  
     System.out.println("STATE: " + state);
