@@ -56,6 +56,8 @@ public class Robot extends TimedRobot {
 
   private double targetAngle;
 
+  private int count = 0;
+
   @Override
   public void robotInit() {
 
@@ -187,7 +189,6 @@ public class Robot extends TimedRobot {
     double speed = 0;
     double turnRate = 0;
     int targetCount = getTargetCount();
-    int count = 0;
 
     targetPos = getTargetTranslation(count);
 
@@ -234,6 +235,7 @@ public class Robot extends TimedRobot {
     else if (state == "NEXT") {
          speed = 0.0;
          turnRate = 0.0;
+
 
         if (count == targetCount - 1) {
             state = "STOP";
