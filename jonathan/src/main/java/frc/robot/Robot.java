@@ -182,7 +182,7 @@ public class Robot extends TimedRobot {
     //  targetAngle = getRotationFromTarget(0);
 
     state = "MOVEUNTIL";
-    previousDistance = getDistanceFromTarget(0);
+    previousDistance = getDistanceFromTarget(0) + 1;
   }
 
   @Override
@@ -191,8 +191,8 @@ public class Robot extends TimedRobot {
     // set these values to change speed and turn rate of the robot
     updateOdometry();
 
-    double speed;
-    double turnRate;
+    double speed = 0;
+    double turnRate = 0;
     double startAngle;
 
     double distance = getDistanceFromTarget(0);
@@ -216,7 +216,7 @@ public class Robot extends TimedRobot {
         previousDistance = distance;
     }
 
-    if (state == "TURNALITTLE") {
+    else if (state == "TURNALITTLE") {
         speed = 0.0;
         turnRate = 0.3;
 

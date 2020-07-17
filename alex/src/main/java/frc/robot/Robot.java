@@ -191,7 +191,9 @@ public class Robot extends TimedRobot {
     // The distance from your target
     double distance = getDistanceFromTarget(0);
 
-    if (state == "TURN") {
+    if (state == "TURN") { if
+        (getAngleDelta(getAngle(), desiredAngle) > 
+        0)
         
     }
 
