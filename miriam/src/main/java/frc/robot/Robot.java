@@ -196,11 +196,16 @@ public class Robot extends TimedRobot {
 
     if state == "turn" {
         turnRate = 0.3;
+        speed = 0.0;
     }
 
-    if state == "forward" {
+    if getAngleDelta(getAngle() == desiredAngle){
+        turnRate = 0.0;
         speed = 0.6;
+        
     }
+
+
 
 
     drive.arcadeDrive(speed, turnRate);

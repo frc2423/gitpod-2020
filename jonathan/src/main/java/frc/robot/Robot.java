@@ -182,7 +182,7 @@ public class Robot extends TimedRobot {
     //  targetAngle = getRotationFromTarget(0);
 
     state = "MOVEUNTIL";
-    previousDistance = getDistanceFromTarget(0) + 1;
+    previousDistance = getDistanceFromTarget(0) - 1;
   }
 
   @Override
@@ -193,7 +193,7 @@ public class Robot extends TimedRobot {
 
     double speed = 0;
     double turnRate = 0;
-    double startAngle;
+    double startAngle = 0;
 
     double distance = getDistanceFromTarget(0);
 
@@ -209,12 +209,14 @@ public class Robot extends TimedRobot {
         speed = 0.3;
         turnRate = 0.0;
         
-        if (previousDistance > distance) {
+        if (previousDistance - .2 > distance) {
             state = "TURNALITTLE";
             startAngle = getAngle();
         }
         previousDistance = distance;
     }
+
+    //it moves until it the dinstance gets smaller than it switches to turn
 
     else if (state == "TURNALITTLE") {
         speed = 0.0;
