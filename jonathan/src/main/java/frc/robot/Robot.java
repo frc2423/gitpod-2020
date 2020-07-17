@@ -58,6 +58,10 @@ public class Robot extends TimedRobot {
 
   private int count = 0;
 
+  private double previousDistance;
+
+
+
   @Override
   public void robotInit() {
 
@@ -171,13 +175,14 @@ public class Robot extends TimedRobot {
     gyro.reset();
     resetOdometry();
 
-     targetPos = getTargetTranslation(0);
+    //  targetPos = getTargetTranslation(0);
 
-     currentPos = getTranslation();
+    //  currentPos = getTranslation();
 
-     targetAngle = getRotationFromTarget(0);
+    //  targetAngle = getRotationFromTarget(0);
 
-    state = "TURN";
+    state = "MOVEUNTIL";
+    previousDistance = getDistanceFromTarget(0);
   }
 
   @Override
@@ -186,64 +191,87 @@ public class Robot extends TimedRobot {
     // set these values to change speed and turn rate of the robot
     updateOdometry();
 
-    double speed = 0;
-    double turnRate = 0;
-    int targetCount = getTargetCount();
+    double speed;
+    double turnRate;
 
-    targetPos = getTargetTranslation(count);
+    double distance = getDistanceFromTarget(0);
 
-    currentPos = getTranslation();
+    // int targetCount = getTargetCount();
 
-    targetAngle = getRotationFromTarget(count);
+    // targetPos = getTargetTranslation(count);
 
-    if (state == "TURN") {
+    // currentPos = getTranslation();
 
-        if (getAngleDelta(getAngle(), targetAngle) > 0) {
-         speed = 0.0;
-         turnRate = 0.3;
+    // targetAngle = getRotationFromTarget(count);
 
-         System.out.println("TURN");
-         System.out.println(getAngleDelta(getAngle(), targetAngle));
-			if (getAngleDelta(getAngle(), targetAngle) < 5) {
-                state = "MOVE";
-            }
-        } else {
-         speed = 0.0;
-         turnRate = -0.3;
+    if (state == "MOVEUNTIL") {
+        speed = 0.3;
+        turnRate = 0.0;
+        
+        if (previousDistance > distance) {
+            gyro.reset();
+            state = "TURNALITTLE";
+        }
+        previousDistance = distance;
+    }
 
-         System.out.println("TURN");
-         System.out.println(getAngleDelta(getAngle(), targetAngle));
-			if (getAngleDelta(getAngle(), targetAngle) > -5) {
-                state = "MOVE";
-            }
+    if (state == "TURNALITTLE") {
+        speed = 0.0;
+        turnRate = 0.3;
+
+        if (getAngle() > 18){
+            state = "MOVEUNTIL";
         }
     }
 
-    else if (state == "MOVE") {
-         speed = 0.3;
-         turnRate = 0.0;  
-            if (getDistanceFromTarget(count) < .1) {
-                state = "NEXT";
-            }
-    }
+    // if (state == "TURN") {
 
-    else if (state == "STOP") {
-         speed = 0.0;
-         turnRate = 0.0;
-    }
+    //     if (getAngleDelta(getAngle(), targetAngle) > 0) {
+    //      speed = 0.0;
+    //      turnRate = 0.3;
 
-    else if (state == "NEXT") {
-         speed = 0.0;
-         turnRate = 0.0;
+    //      System.out.println("TURN");
+    //      System.out.println(getAngleDelta(getAngle(), targetAngle));
+	// 		if (getAngleDelta(getAngle(), targetAngle) < 5) {
+    //             state = "MOVE";
+    //         }
+    //     } else {
+    //      speed = 0.0;
+    //      turnRate = -0.3;
+
+    //      System.out.println("TURN");
+    //      System.out.println(getAngleDelta(getAngle(), targetAngle));
+	// 		if (getAngleDelta(getAngle(), targetAngle) > -5) {
+    //             state = "MOVE";
+    //         }
+    //     }
+    // }
+
+    // else if (state == "MOVE") {
+    //      speed = 0.3;
+    //      turnRate = 0.0;  
+    //         if (getDistanceFromTarget(count) < .1) {
+    //             state = "NEXT";
+    //         }
+    // }
+
+    // else if (state == "STOP") {
+    //      speed = 0.0;
+    //      turnRate = 0.0;
+    // }
+
+    // else if (state == "NEXT") {
+    //      speed = 0.0;
+    //      turnRate = 0.0;
 
 
-        if (count == targetCount - 1) {
-            state = "STOP";
-        } else {
-            count += 1;
-            state = "TURN";
-        }
-    }
+    //     if (count == targetCount - 1) {
+    //         state = "STOP";
+    //     } else {
+    //         count += 1;
+    //         state = "TURN";
+    //     }
+    // }
  
     System.out.println("STATE: " + state);
 

@@ -165,6 +165,31 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
 
+    // Steps:
+    // 1. Face the point you want to move to
+    // 2. Drive toward that point
+    // 3. Stop when you get close
+
+    // gets you the current location of the robot
+    Translation2d currentLocation = getTranslation();
+
+    // get x and y coordinates
+    double currentX = currentLocation.getX();
+    double currentY = currentLocation.getY();
+
+    // gets you the point you want to move to
+    Translation2d targetLocation = getTargetTranslation(0);
+
+    // get angle you want to face to get to target
+    double desiredAngle = getRotationFromTarget(0);
+
+    // The amount you need to turn the robot to face the desired angle
+    double angleDelta = getAngleDelta(getAngle(), desiredAngle);
+
+    // The distance from your target
+    double distance = getDistanceFromTarget(0);
+    
+
     // set these values to change speed and turn rate of the robot
     double speed = 0.0;
     double turnRate = 0.0;
