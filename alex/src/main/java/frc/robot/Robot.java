@@ -48,6 +48,8 @@ public class Robot extends TimedRobot {
 
   private NetworkTable table;
 
+  private String state;
+
   @Override
   public void robotInit() {
 
@@ -188,7 +190,10 @@ public class Robot extends TimedRobot {
 
     // The distance from your target
     double distance = getDistanceFromTarget(0);
-    
+
+    if (state == "TURN") {
+        
+    }
 
 
     

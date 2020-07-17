@@ -194,6 +194,15 @@ public class Robot extends TimedRobot {
     double speed = 0.0;
     double turnRate = 0.0;
 
+    if state == "turn" {
+        turnRate = 0.3;
+    }
+
+    if state == "forward" {
+        speed = 0.6;
+    }
+
+
     drive.arcadeDrive(speed, turnRate);
   }
 

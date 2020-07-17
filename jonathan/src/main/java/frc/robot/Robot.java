@@ -193,6 +193,7 @@ public class Robot extends TimedRobot {
 
     double speed;
     double turnRate;
+    double startAngle;
 
     double distance = getDistanceFromTarget(0);
 
@@ -209,8 +210,8 @@ public class Robot extends TimedRobot {
         turnRate = 0.0;
         
         if (previousDistance > distance) {
-            gyro.reset();
             state = "TURNALITTLE";
+            startAngle = getAngle();
         }
         previousDistance = distance;
     }
@@ -219,7 +220,7 @@ public class Robot extends TimedRobot {
         speed = 0.0;
         turnRate = 0.3;
 
-        if (getAngle() > 18){
+        if (startAngle - getAngle() > 18){
             state = "MOVEUNTIL";
         }
     }
