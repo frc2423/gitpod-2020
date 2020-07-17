@@ -212,6 +212,8 @@ public class Robot extends TimedRobot {
         if (previousDistance - .2 > distance) {
             state = "TURNALITTLE";
             startAngle = getAngle();
+
+            System.out.println("prev: " + previousDistance);
         }
         previousDistance = distance;
     }
