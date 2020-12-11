@@ -104,7 +104,7 @@ public class Robot extends TimedRobot {
     // The angle we want to face
     double targetAngle = this.targetAngle.getDouble(0);
 
-    double error = (Math.abs(angle - targetAngle)/targetAngle);
+    double error = targetAngle - angle;
 
     accumulatedError = accumulatedError + error;
 
