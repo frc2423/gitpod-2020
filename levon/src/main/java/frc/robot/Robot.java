@@ -48,6 +48,7 @@ public class Robot extends TimedRobot {
   private NetworkTable table = NetworkTableInstance.getDefault().getTable("robot");
   private NetworkTableEntry targetAngle = table.getEntry("targetAngle");
 
+  private double totalError = 0;
 
   @Override
   public void robotInit() {
@@ -103,11 +104,22 @@ public class Robot extends TimedRobot {
     // The angle we want to face
     double targetAngle = this.targetAngle.getDouble(0);
 
+    double error = targetAngle - angle;
+ 
+    totalError = error + totalError
+
     double speed = 0;
-    double turnRate = 0;
+    double turnrate = .25 * error + totalError * .01;
+
 
     drive.arcadeDrive(bound(speed, -.6, .6), bound(turnRate, -.6, .6));
-  }
+  
+
+
+
+
+
+}
 
 
 
