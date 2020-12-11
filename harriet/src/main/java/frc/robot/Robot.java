@@ -107,9 +107,9 @@ public class Robot extends TimedRobot {
 
     double speed = 0;
 
-    double error = (targetAngle-angle)/targetAngle;
+    double error = targetAngle-angle;
     accumulatedError += error;
-    double turnRate = error + accumulatedError/180;
+    double turnRate = error/90 + accumulatedError/180;
 
     drive.arcadeDrive(bound(speed, -.6, .6), bound(turnRate, -.6, .6));
   }

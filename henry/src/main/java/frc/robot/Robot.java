@@ -109,7 +109,11 @@ public class Robot extends TimedRobot {
     accumulatedError = accumulatedError + error;
 
     double speed = 0;
-    double turnRate = 0.25 * error + 0.05 * accumulatedError;
+    double turnRate = 0;
+
+    if (Math.abs(error) > 5) {
+        turnRate = 0.25 * error + 0.05 * accumulatedError;
+    }
 
     drive.arcadeDrive(bound(speed, -.6, .6), bound(turnRate, -.6, .6));
   }
