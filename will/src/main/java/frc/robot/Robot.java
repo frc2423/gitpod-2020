@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
     double RIGHT_TICKS_PER_REV = -12.786;
     double FEET_PER_REV = .666667 * Math.PI;
     double RIGHT_TICKS_PER_FOOT = RIGHT_TICKS_PER_REV / FEET_PER_REV;
-    return frMotor.getEncoder().getVelocity() / RIGHT_TICKS_PER_FOOT / 60;
+    return frMotor.getEncoder().getVelocity() / RIGHT_TICKS_PER_FOOT / 60;  
   }
 
   @Override
@@ -104,13 +104,14 @@ public class Robot extends TimedRobot {
     double angle = gyro.getAngle();
 
     // The angle we want to face
-    double targetAngle = this.targetAngle.getDouble(0);
+    double targetSpeed = .2;
 
     double speed = 0;
     double turnRate = 0;
 
-    errorI += (targetAngle - angle);
-    turnRate = (1/targetAngle)*(targetAngle - angle) + (errorI * i);
+    errorS += (targetSpeed - angle);
+    //turnRate = (1/targetAngle)*(targetAngle - angle) + (errorI * i);
+    speed = ((targetSpeed/velocity)*targetSpeed) + (errorS);
 
     drive.arcadeDrive(bound(speed, -.6, .6), bound(turnRate, -.6, .6));
   }

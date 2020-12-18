@@ -48,6 +48,7 @@ public class Robot extends TimedRobot {
   private NetworkTable table = NetworkTableInstance.getDefault().getTable("robot");
   private NetworkTableEntry targetAngle = table.getEntry("targetAngle");
   private double accumulatedError = 0;
+  private double accumulatedSpeedError = 0;
 
 
   @Override
@@ -87,6 +88,13 @@ public class Robot extends TimedRobot {
     return frMotor.getEncoder().getVelocity() / RIGHT_TICKS_PER_FOOT / 60;
   }
 
+  double getDistance() {
+    double LEFT_TICKS_PER_REV = 14.857;
+    double FEET_PER_REV = .666667 * Math.PI;
+    double LEFT_TICKS_PER_FOOT = LEFT_TICKS_PER_REV / FEET_PER_REV;
+    return flMotor.getEncoder().getPosition() / LEFT_TICKS_PER_FOOT;
+  }
+
   @Override
   public void autonomousInit() {
     gyro.reset();
@@ -113,6 +121,16 @@ public class Robot extends TimedRobot {
 
     if (Math.abs(error) > 5) {
         turnRate = 0.25 * error + 0.05 * accumulatedError;
+    }
+
+    double targetSpeed = 0.2;
+
+    double speedError = targetSpeed - velocity;
+
+    accumulatedSpeedError = accumulatedSpeedError + speedError;
+
+    if (getDistance() < 8) {
+        speed = 0.5 * targetSpeed + 0.05 * accumulatedSpeedError;
     }
 
     drive.arcadeDrive(bound(speed, -.6, .6), bound(turnRate, -.6, .6));
